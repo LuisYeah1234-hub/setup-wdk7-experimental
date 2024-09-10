@@ -1,0 +1,18 @@
+name: 'Enable Windows Driver Kit 7.1.0 Build Environment'
+description: 'Action that Installs, Configures WDK 7.1.0 Build Environment in GitHub workflows'
+inputs:
+  type:
+    description: Build environment type (fre (Free), chk (Checked) )
+    default: fre
+  arch:
+    description: Target architecture
+    default: x86
+  os:
+    description: Target operating system
+    default: wxp
+runs:
+  using: node20
+  main: dist/index.js
+branding:
+  icon: terminal
+  color: yellow 

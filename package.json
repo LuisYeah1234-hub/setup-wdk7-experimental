@@ -1,0 +1,25 @@
+{
+  "name": "setup-wdk7",
+  "version": "1.0.0",
+  "description": "GitHub Action to setup Windows Driver Kit 7.1.0 build environment",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LuisYeah1234-hub/setup-wdk7.git"
+  },
+  "keywords": [
+    "GitHub",
+    "Actions",
+    "Windows Driver Kit 7.1.0"
+  ],
+  "author": "LuisYeah1234-hub",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/LuisYeah1234-hub/setup-wdk7/issues"
+  },
+  "homepage": "https://github.com/LuisYeah1234-hub/setup-wdk7#readme",
+  "dependencies": {
+    "@actions/core": "^1.10.0",
+    "@actions/exec": "^1.1.1"
+  }
+}
