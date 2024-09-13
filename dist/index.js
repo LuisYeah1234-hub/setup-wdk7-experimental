@@ -28094,7 +28094,7 @@ async function run() {
 
     await exec.exec('powershell', ['-Command', `$mountResult = Mount-DiskImage -ImagePath "${path.join(workspace, 'GRMWDK_EN_7600_1.ISO')}" -PassThru; $driveLetter = ($mountResult | Get-Volume).DriveLetter; Write-Output "Mounted WDK ISO to drive $driveLetter"`], { cwd: workspace });
 
-    await exec.exec('powershell', [`$driveLetter = (Get-DiskImage -ImagePath "${path.join(workspace, 'GRMWDK_EN_7600_1.ISO')}" | Get-Volume).DriveLetter; $Path = $driveLetter + ':\\WDK'; cd $Path; Get-ChildItem -Filter *.msi | ForEach-Object { Write-Output "$($_.BaseName)"; Start-Process msiexec.exe -ArgumentList "/a", $_.FullName, "/quiet", "/norestart" -Wait; Remove-Item -Path (Join-Path -Path '%SystemDrive%' -ChildPath "$($_.BaseName).msi") -Force -ErrorAction SilentlyContinue; }`], { cwd: workspace });
+    await exec.exec('powershell', [`$driveLetter = (Get-DiskImage -ImagePath "${path.join(workspace, 'GRMWDK_EN_7600_1.ISO')}" | Get-Volume).DriveLetter; $Path = $driveLetter + ':\\WDK'; cd $Path; Get-ChildItem -Filter *.msi | ForEach-Object { Write-Output "$($_.BaseName)"; Start-Process msiexec.exe -ArgumentList "/a", $_.FullName, "/quiet", "/norestart" -Wait; Remove-Item -Path (Join-Path -Path '$env:SystemDrive' -ChildPath "$($_.BaseName).msi") -Force -ErrorAction SilentlyContinue; }`], { cwd: workspace });
 
     await exec.exec('powershell', [`Dismount-DiskImage -ImagePath "${path.join(workspace, 'GRMWDK_EN_7600_1.ISO')}"`]);
     fs.unlinkSync(path.join(workspace, 'GRMWDK_EN_7600_1.ISO'));
