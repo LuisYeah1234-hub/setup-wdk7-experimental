@@ -28102,18 +28102,52 @@ async function run() {
     const wdkDir = `%SystemDrive%\\WinDDK\\7600.16385.win7_wdk.100208-1538`;
     const setenv = `${wdkDir}\\bin\\setenv.bat ${wdkDir} ${type} ${arch} ${os} no_oacr`;
 
+    // Capture initial environment via `set` command
+    let initialEnvOutput = '';
+    await exec.exec('cmd', ['/c', 'set'], {
+      listeners: {
+        stdout: (data) => { initialEnvOutput += data.toString(); },
+        stderr: (data) => { core.error(data.toString()); }
+      }
+    });
+
     let cmd_output_string = '';
-    await exec.exec('cmd', ['/c', `set && cls && ${setenv} && cls && set`], { listeners: { stdout: (data) => { cmd_output_string += data.toString(); }, stderr: (data) => { core.error(data.toString()); } } });
+    await exec.exec('cmd', ['/c', ` ${setenv}`], { listeners: { stderr: (data) => { core.error(data.toString()); } } });
 
-    const outputParts = cmd_output_string.split('\f');
-    const newEnvironment = outputParts[2].split('\r\n');
+    // Capture new environment via `set` command
+    let finalEnvOutput = '';
+    await exec.exec('cmd', ['/c', 'set'], {
+      listeners: {
+        stdout: (data) => { finalEnvOutput += data.toString(); },
+        stderr: (data) => { core.error(data.toString()); }
+      }
+    });
 
-    // Unlike msvc-dev-cmd by ilammy. we need to get the environment variables set by WDK 7
-    for (const line of newEnvironment) {
-        if (line.includes('=')) {
-            const [name, value] = line.split('=');
-            core.exportVariable(name, value);
-        }
+    // Parse outputs and identify new/modified variables
+    const initialEnv = {};
+    const finalEnv = {};
+
+    // Parse initial environment variables
+    initialEnvOutput.split('\r\n').forEach(line => {
+      const [name, value] = line.split('=');
+      if (name && value) {
+        initialEnv[name.trim()] = value.trim();
+      }
+    });
+
+    // Parse final environment variables
+    finalEnvOutput.split('\r\n').forEach(line => {
+      const [name, value] = line.split('=');
+      if (name && value) {
+        finalEnv[name.trim()] = value.trim();
+      }
+    });
+
+    // Step 4: Identify and export new or modified variables
+    for (const [name, value] of Object.entries(finalEnv)) {
+      if (initialEnv[name] !== value) {
+        core.exportVariable(name, value);
+      }
     }
 
     core.info(`Configured Windows Driver Kit 7.1.0 Command Prompt`)
