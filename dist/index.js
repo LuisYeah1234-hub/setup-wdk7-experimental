@@ -28113,7 +28113,7 @@ async function run() {
     
     // Convert old environment lines into a dictionary for easier lookup.
     let oldVars = {}
-    for (let string of oldenvironment) {
+    for (let string of oldEnvironment) {
         const [name, value] = string.split('=')
         old_env_vars[name] = value
     }
