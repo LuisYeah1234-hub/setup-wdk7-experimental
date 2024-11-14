@@ -28123,7 +28123,7 @@ async function run() {
             let [name, new_value] = line.split('=')
             let old_value = oldVars[name]
             if (new_value !== old_value) {
-               core.exportVariable(name, value);
+               core.exportVariable(name, new_value);
             }
         }
     }
