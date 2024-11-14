@@ -28102,7 +28102,8 @@ async function run() {
     const wdkDir = `%SystemDrive%\\WinDDK\\7600.16385.win7_wdk.100208-1538`;
     const setenv = `${wdkDir}\\bin\\setenv.bat ${wdkDir} ${type} ${arch} ${os} no_oacr`;
 
-    const cmd_output_string = exec.exec('cmd', ['/c', `set && cls && ${setenv} && cls && set`], { listeners: { stdout: (data) => { cmd_output_string += data.toString(); }, stderr: (data) => { core.error(data.toString()); } } });
+    let cmd_output_string = '';
+    await exec.exec('cmd', ['/c', `set && cls && ${setenv} && cls && set`], { listeners: { stdout: (data) => { cmd_output_string += data.toString(); }, stderr: (data) => { core.error(data.toString()); } } });
 
     const outputParts = cmd_output_string.split('\f');
     const oldEnvironment = outputParts[0].split('\r\n')
