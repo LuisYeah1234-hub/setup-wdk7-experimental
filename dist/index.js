@@ -28115,7 +28115,7 @@ async function run() {
     let oldVars = {}
     for (let string of oldEnvironment) {
         const [name, value] = string.split('=')
-        old_env_vars[name] = value
+        oldVars[name] = value
     }
       
     for (const line of newEnvironment) {
