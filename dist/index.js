@@ -28120,7 +28120,7 @@ async function run() {
       
     for (const line of newEnvironment) {
         if (line.includes('=')) {
-            let [name, new_value] = string.split('=')
+            let [name, new_value] = line.split('=')
             let old_value = oldVars[name]
             if (new_value !== old_value) {
                core.exportVariable(name, value);
