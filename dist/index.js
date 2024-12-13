@@ -28106,12 +28106,16 @@ async function run() {
     if (!validate(type, validBuildTypes, 'Type')) return;    // Exit if invalid type
     if (!validate(os, validOSVersions, 'OS')) return;      // Exit if invalid os
 
+    // Normalize inputs for case-insensitive comparison
+    const normalizeArch = normalize(arch);
+    const normalizeOs = normalize(os);
+
     // Fail on incompatible configurations
-    if (os === 'wxp' && (arch === 'x64' || arch === 'x32-64' || arch === 'ia64' || arch === '64')) {
+    if (normalizeOs === 'wxp' && ['x64', 'x32-64', 'ia64', '64'].includes(normalizeArch)) {
       core.setFailed(`${os} does not support building for ${arch}!! Failing..`);
       return;
     }
-
+    
     await exec.exec('aria2c', ['https://archive.org/download/grmwdk-en-7600-1/GRMWDK_EN_7600_1.ISO'], { cwd: workspace });
 
     await exec.exec('powershell', ['-Command', `$mountResult = Mount-DiskImage -ImagePath "${path.join(workspace, 'GRMWDK_EN_7600_1.ISO')}" -PassThru; $driveLetter = ($mountResult | Get-Volume).DriveLetter; Write-Output "Mounted WDK ISO to drive $driveLetter"`], { cwd: workspace });
