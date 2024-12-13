@@ -28115,7 +28115,8 @@ async function run() {
       core.setFailed(`${os} does not support building for ${arch}!! Failing..`);
       return;
     }
-    
+
+    core.startGroup('WDK Installation');
     await exec.exec('aria2c', ['https://archive.org/download/grmwdk-en-7600-1/GRMWDK_EN_7600_1.ISO'], { cwd: workspace });
 
     await exec.exec('powershell', ['-Command', `$mountResult = Mount-DiskImage -ImagePath "${path.join(workspace, 'GRMWDK_EN_7600_1.ISO')}" -PassThru; $driveLetter = ($mountResult | Get-Volume).DriveLetter; Write-Output "Mounted WDK ISO to drive $driveLetter"`], { cwd: workspace });
@@ -28124,7 +28125,9 @@ async function run() {
 
     await exec.exec('powershell', [`Dismount-DiskImage -ImagePath "${path.join(workspace, 'GRMWDK_EN_7600_1.ISO')}"`]);
     fs.unlinkSync(path.join(workspace, 'GRMWDK_EN_7600_1.ISO'));
+    core.endGroup();
 
+    core.startGroup('Prepare WDK Build Environment');
     const wdkDir = `%SystemDrive%\\WinDDK\\7600.16385.win7_wdk.100208-1538`;
     const setenv = `${wdkDir}\\bin\\setenv.bat ${wdkDir} ${type} ${arch} ${os} no_oacr`;
 
@@ -28153,6 +28156,7 @@ async function run() {
             }
         }
     }
+    core.endGroup();
 
     core.info(`Configured Windows Driver Kit 7.1.0 Command Prompt`)
 
