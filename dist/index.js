@@ -28071,6 +28071,24 @@ const exec = __nccwpck_require__(8812);
 const fs = __nccwpck_require__(7147);
 const path = __nccwpck_require__(1017);
 
+// Valid target values for WDK 7
+const validArchitectures = ['64', 'x64', 'I386', 'IA64', 'IA32', 'x86', 'x32-64'];
+const validBuildTypes = ['f', 'fre', 'free', 'c', 'chk', 'CHK', 'checked'];
+const validOSVersions = ['Wlh', 'WNet', 'WXP', 'WIN7'];
+
+// Normalize input to lowercase for case-insensitive comparison
+const normalize = (input) => input.trim().toLowerCase();
+
+// Validate input against its corresponding valid set
+const validate = (input, validValues, inputName) => {
+  const normalizedInput = normalize(input);  // Normalize the input
+  if (!validValues.some(validValue => normalize(validValue) === normalizedInput)) {
+    core.setFailed(`${inputName} value "${input}" is invalid.`);
+    return false;
+  }
+  return true;
+};
+
 async function run() {
   try {
     if (process.platform != 'win32') {
@@ -28083,6 +28101,10 @@ async function run() {
     const arch = core.getInput('arch');
     const os = core.getInput('os');
     const workspace = process.env.GITHUB_WORKSPACE;
+
+    if (!validate(arch, validArchitectures, 'Arch')) return; // Exit if invalid arch
+    if (!validate(type, validBuildTypes, 'Type')) return;    // Exit if invalid type
+    if (!validate(os, validOSVersions, 'OS')) return;      // Exit if invalid os
 
     // Fail on incompatible configurations
     if (os === 'wxp' && (arch === 'x64' || arch === 'ia64')) {
