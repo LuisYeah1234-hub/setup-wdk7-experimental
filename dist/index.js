@@ -28107,7 +28107,7 @@ async function run() {
     if (!validate(os, validOSVersions, 'OS')) return;      // Exit if invalid os
 
     // Fail on incompatible configurations
-    if (os === 'wxp' && (arch === 'x64' || arch === 'ia64')) {
+    if (os === 'wxp' && (arch === 'x64' || arch === 'x32-64' || arch === 'ia64' || arch === '64')) {
       core.setFailed(`${os} does not support building for ${arch}!! Failing..`);
       return;
     }
